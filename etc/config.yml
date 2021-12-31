@@ -1,0 +1,14 @@
+APP:
+  Port: 8080
+  Mode: dev
+
+Log:
+  Path: ./logs/gin-layouts.log
+  Level: DEBUG
+
+DB:
+  Host: 192.168.2.46
+  Port: 3306
+  UserName: root
+  Password: ylzh123456
+  DBName: gin-demo
