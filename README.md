@@ -18,7 +18,7 @@
 
 ## Overview
 ### Project structure
-```json
+```
 ├─config
 ├─controller
 ├─dao
