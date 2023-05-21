@@ -7,7 +7,7 @@ import (
 	"strconv"
 )
 
-var ShareConf *AppConf
+var shareConf *AppConf
 
 type AppConf struct {
 	*Site   `mapstructure:"site"`
@@ -19,24 +19,6 @@ type AppConf struct {
 type Site struct {
 	Mode string `mapstructure:"mode"`
 	Port int    `mapstructure:"port"`
-}
-
-type DB struct {
-	Driver  string `mapstructure:"driver"`
-	*MySQL  `mapstructure:"mysql"`
-	*SQLite `mapstructure:"sqlite"`
-}
-
-type MySQL struct {
-	Host     string `mapstructure:"host"`
-	User     string `mapstructure:"user"`
-	Password string `mapstructure:"password"`
-	Port     int    `mapstructure:"port"`
-	DBName   string `mapstructure:"db_name"`
-}
-
-type SQLite struct {
-	Name string `mapstructure:"name"`
 }
 
 type Redis struct {
@@ -55,21 +37,27 @@ type Logger struct {
 }
 
 func Init() error {
-	viper.SetConfigFile("./conf/config.sample.yaml")
+	conf := &AppConf{}
+	viper.SetConfigFile("./conf/config.yaml")
 	viper.WatchConfig()
 	viper.OnConfigChange(func(in fsnotify.Event) {
-		_ = viper.Unmarshal(&ShareConf)
+		_ = viper.Unmarshal(&conf)
 	})
 	err := viper.ReadInConfig()
 	if err != nil {
 		return err
 	}
-	if err = viper.Unmarshal(&ShareConf); err != nil {
+	if err = viper.Unmarshal(&conf); err != nil {
 		return err
 	}
+	shareConf = conf
 	return nil
 }
 
-func GetSitePort() string {
-	return fmt.Sprintf(":%s", strconv.Itoa(ShareConf.Site.Port))
+func Conf() *AppConf {
+	return shareConf
+}
+
+func (c *AppConf) GetPort() string {
+	return fmt.Sprintf(":%s", strconv.Itoa(c.Site.Port))
 }
