@@ -1,10 +1,14 @@
+//go:build ent
+
 package data
 
 import (
 	"context"
 	"fmt"
+
 	"gin-layout/config"
 	"gin-layout/data/ent"
+
 	"github.com/go-redis/redis"
 
 	_ "github.com/go-sql-driver/mysql"
@@ -23,9 +27,9 @@ func NewData() (*Data, func(), error) {
 
 	switch config.Conf().DB.Driver {
 	case config.DBDriver.MySQL:
-		client, err = ent.Open("mysql", "<user>:<pass>@tcp(<host>:<port>)/<database>?parseTime=True")
+		client, err = ent.Open(config.DBDriver.MySQL, config.Conf().MySQL.GetDSN())
 	default:
-		client, err = ent.Open("sqlite3", "file:test.db?cache=shared&_fk=1")
+		client, err = ent.Open(config.DBDriver.SQLite3, config.Conf().SQLite.GetDSN())
 	}
 
 	if err != nil {

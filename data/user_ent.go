@@ -1,7 +1,10 @@
+//go:build ent
+
 package data
 
 import (
 	"context"
+
 	"gin-layout/biz"
 )
 
