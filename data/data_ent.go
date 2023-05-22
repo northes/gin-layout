@@ -4,12 +4,12 @@ package data
 
 import (
 	"context"
-	"fmt"
 
 	"gin-layout/config"
 	"gin-layout/data/ent"
 
 	"github.com/go-redis/redis"
+	"go.uber.org/zap"
 
 	_ "github.com/go-sql-driver/mysql"
 	_ "github.com/mattn/go-sqlite3"
@@ -27,9 +27,9 @@ func NewData() (*Data, func(), error) {
 
 	switch config.Conf().DB.Driver {
 	case config.DBDriver.MySQL:
-		client, err = ent.Open(config.DBDriver.MySQL, config.Conf().MySQL.GetDSN())
+		client, err = ent.Open(string(config.DBDriver.MySQL), config.Conf().MySQL.GetDSN())
 	default:
-		client, err = ent.Open(config.DBDriver.SQLite3, config.Conf().SQLite.GetDSN())
+		client, err = ent.Open(string(config.DBDriver.SQLite3), config.Conf().SQLite.GetDSN())
 	}
 
 	if err != nil {
@@ -45,7 +45,7 @@ func NewData() (*Data, func(), error) {
 	}
 
 	return d, func() {
-		fmt.Println("cleanup")
+		zap.L().Info("Clean up db clients...")
 		_ = d.db.Close()
 	}, nil
 }
