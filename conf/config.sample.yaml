@@ -6,10 +6,10 @@ db:
   driver: sqlite # sqlite,mysql
   mysql:
     host: 127.0.0.1
-    user: apihut
+    user: gin-layout
     password: 12346
     port: 3306
-    db_name: apihut
+    db_name: gin_layout
   sqlite:
     name: test.db
 
@@ -21,7 +21,7 @@ redis:
 
 logger:
   level: debug
-  file_name: apihut.log
+  file_name: gin-layout.log
   max_size: 12
   max_age: 12
   max_backups: 12
