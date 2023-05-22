@@ -1,12 +1,14 @@
 package logger
 
 import (
+	"os"
+
 	"gin-layout/config"
+
 	"github.com/gin-gonic/gin"
 	"github.com/natefinch/lumberjack"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
-	"os"
 )
 
 var l *zap.Logger
@@ -26,7 +28,7 @@ func Init() (err error) {
 		console := zapcore.NewConsoleEncoder(zap.NewDevelopmentEncoderConfig())
 		core = zapcore.NewTee(
 			zapcore.NewCore(encoder, writerSyncer, level),
-			zapcore.NewCore(console, zapcore.Lock(os.Stdout), zapcore.DebugLevel),
+			zapcore.NewCore(console, zapcore.Lock(os.Stdout), level),
 		)
 	} else {
 		// 发布模式输出文件
