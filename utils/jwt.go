@@ -2,16 +2,25 @@ package utils
 
 import (
 	"fmt"
+
 	"github.com/golang-jwt/jwt/v5"
 )
 
 var (
-	jwtSecret = []byte("gin-layout")
+	jwtSecret = []byte("just_navigation_server")
 )
 
-func CreateAndSignJWT() (string, error) {
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, &jwt.RegisteredClaims{
-		Issuer: "test",
+type UserJWTClaims struct {
+	jwt.RegisteredClaims
+	UserID int64 `json:"user_id"`
+}
+
+func CreateAndSignJWT(userID int64) (string, error) {
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, &UserJWTClaims{
+		RegisteredClaims: jwt.RegisteredClaims{
+			Issuer: "just_navigation",
+		},
+		UserID: userID,
 	})
 	tokenStr, err := token.SignedString(jwtSecret)
 	return tokenStr, err
