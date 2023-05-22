@@ -4,6 +4,7 @@ import (
 	"gin-layout/biz"
 	"gin-layout/errorx"
 	"gin-layout/message"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -26,7 +27,7 @@ func NewUserService(user *biz.UserUsecase) {
 func (u *UserService) CreateUser(c *gin.Context) {
 	req := new(message.UserCreateRequest)
 	if err := c.BindJSON(req); err != nil {
-		errorx.ParamsErr.SetInCtx(c, err)
+		errorx.ParamsErr.SetWithCtx(c, err)
 		return
 	}
 	err := u.user.Create(c, &biz.User{
@@ -36,7 +37,7 @@ func (u *UserService) CreateUser(c *gin.Context) {
 		Password: req.Password,
 	})
 	if err != nil {
-		errorx.UserCreateErr.SetInCtx(c, err)
+		errorx.UserCreateErr.SetWithCtx(c, err)
 		return
 	}
 
