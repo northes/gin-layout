@@ -3,6 +3,7 @@ package middleware
 import (
 	"gin-layout/errorx"
 	"gin-layout/message"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -11,9 +12,9 @@ func Response() gin.HandlerFunc {
 		c.Next()
 
 		// 统一错误处理
-		code, ok := errorx.GetErrorCodeWithCtx(c)
+		err, ok := errorx.GetWithCtx(c)
 		if ok {
-			message.FailedWithMsg(c, code.Msg())
+			message.FailedWithMsg(c, err.ErrCode.Msg())
 		}
 	}
 }

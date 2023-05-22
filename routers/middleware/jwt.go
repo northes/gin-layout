@@ -2,9 +2,11 @@ package middleware
 
 import (
 	"fmt"
-	"gin-layout/utils"
-	"github.com/gin-gonic/gin"
 	"strings"
+
+	"gin-layout/utils"
+
+	"github.com/gin-gonic/gin"
 )
 
 func JWT() gin.HandlerFunc {
