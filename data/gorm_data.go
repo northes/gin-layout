@@ -11,11 +11,13 @@ import (
 	"gorm.io/gorm"
 )
 
+const Name = "gorm"
+
 type Data struct {
 	db *gorm.DB
 }
 
-func NewData() (*Data, func(), error) {
+func Init() (*Data, func(), error) {
 	var db *gorm.DB
 	var err error
 

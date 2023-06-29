@@ -15,12 +15,14 @@ import (
 	_ "github.com/mattn/go-sqlite3"
 )
 
+const Name = "ent"
+
 type Data struct {
 	db  *ent.Client
 	rdb *redis.Client
 }
 
-func NewData() (*Data, func(), error) {
+func Init() (*Data, func(), error) {
 
 	var client *ent.Client
 	var err error
@@ -43,6 +45,8 @@ func NewData() (*Data, func(), error) {
 	d := &Data{
 		db: client,
 	}
+
+	zap.L().Info("database init success")
 
 	return d, func() {
 		zap.L().Info("Clean up db clients...")
