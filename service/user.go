@@ -2,10 +2,11 @@ package service
 
 import (
 	"gin-layout/biz"
-	"gin-layout/errorx"
 	"gin-layout/message"
+	"gin-layout/response"
 
 	"github.com/gin-gonic/gin"
+	"go.uber.org/zap"
 )
 
 type UserService struct {
@@ -26,8 +27,9 @@ func NewUserService(user *biz.UserUsecase) {
 
 func (u *UserService) CreateUser(c *gin.Context) {
 	req := new(message.UserCreateRequest)
-	if err := c.BindJSON(req); err != nil {
-		errorx.ParamsErr.SetWithCtx(c, err)
+	if err := c.ShouldBindJSON(req); err != nil {
+		zap.L().Error("参数错误", zap.Error(err))
+		response.BadRequest(c)
 		return
 	}
 	err := u.user.Create(c, &biz.User{
@@ -37,11 +39,12 @@ func (u *UserService) CreateUser(c *gin.Context) {
 		Password: req.Password,
 	})
 	if err != nil {
-		errorx.UserCreateErr.SetWithCtx(c, err)
+		zap.L().Error("用户创建失败", zap.Error(err))
+		response.InternalServerErrorWithMsg(c, "用户创建失败")
 		return
 	}
 
-	message.SuccessWithData(c, &message.UserCreateResponse{
+	response.SuccessWithData(c, &message.UserCreateResponse{
 		OK: true,
 	})
 }

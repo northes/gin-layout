@@ -5,9 +5,6 @@ import (
 	"io"
 	"net/http"
 	"strings"
-	"time"
-
-	"gin-layout/errorx"
 
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
@@ -15,12 +12,12 @@ import (
 
 func Logger() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		timeStart := time.Now()
+		//timeStart := time.Now()
 		raw := c.Request.URL.RawQuery
 		path := c.Request.URL.Path
 		method := c.Request.Method
-		statusCode := c.Writer.Status()
-		clientIP := c.ClientIP()
+		//statusCode := c.Writer.Status()
+		//clientIP := c.ClientIP()
 		if raw != "" {
 			path = path + "?" + raw
 		}
@@ -39,21 +36,21 @@ func Logger() gin.HandlerFunc {
 
 		c.Next()
 
-		latency := time.Now().Sub(timeStart)
+		//latency := time.Now().Sub(timeStart)
 
-		errx, ok := errorx.GetWithCtx(c)
-		if !ok {
-			errx = errorx.SuccessErr.New()
-		}
-
-		zap.L().Info("[GIN]",
-			zap.Int("status_code", statusCode),
-			zap.Any("Latency", latency),
-			zap.String("client_ip", clientIP),
-			zap.String("method", method),
-			zap.String("path", path),
-			zap.Any("err_code", errx.ErrCode),
-			zap.Errors("errors", errx.Errors),
-		)
+		//errx, ok := errorx.GetWithCtx(c)
+		//if !ok {
+		//	errx = errorx.SuccessErr.New()
+		//}
+		//
+		//zap.L().Info("[GIN]",
+		//	zap.Int("status_code", statusCode),
+		//	zap.Any("Latency", latency),
+		//	zap.String("client_ip", clientIP),
+		//	zap.String("method", method),
+		//	zap.String("path", path),
+		//	zap.Any("err_code", errx.ErrCode),
+		//	zap.Errors("errors", errx.Errors),
+		//)
 	}
 }

@@ -11,8 +11,6 @@ import (
 	"go.uber.org/zap/zapcore"
 )
 
-var l *zap.Logger
-
 func Init() (err error) {
 	cfg := config.Conf().Logger
 	writerSyncer := logWriter(cfg.FileName, cfg.MaxSize, cfg.MaxBackups, cfg.MaxAge)
@@ -35,9 +33,9 @@ func Init() (err error) {
 		core = zapcore.NewCore(encoder, writerSyncer, level)
 	}
 
-	l = zap.New(core, zap.AddCaller())
+	l := zap.New(core, zap.AddCaller())
 	zap.ReplaceGlobals(l)
-	zap.L().Info("init logger success")
+	zap.L().Info("logger init success")
 	return
 }
 

@@ -1,51 +1,54 @@
 package main
 
 import (
-	"fmt"
 	"gin-layout/biz"
 	"gin-layout/config"
 	"gin-layout/data"
 	"gin-layout/logger"
 	"gin-layout/routers"
 	"gin-layout/service"
+
+	"go.uber.org/zap"
 )
 
 var (
 	Version string
 )
 
-func newApp() (func(), error) {
-	d, cleanup, err := data.NewData()
-	if err != nil {
-		return nil, err
-	}
-
-	if err = logger.Init(); err != nil {
-		return nil, err
-	}
-
+func newService(d *data.Data) error {
 	// User
 	userRepo := data.NewUserRepo(d)
 	userUseCase := biz.NewUserUsecase(userRepo)
 	service.NewUserService(userUseCase)
 
-	return cleanup, nil
+	return nil
 }
 
 func main() {
-	err := config.Init()
+	// 配置初始化
+	if err := config.Init(); err != nil {
+		panic(err)
+	}
+
+	// 日志初始化
+	if err := logger.Init(); err != nil {
+		panic(err)
+	}
+
+	// 数据库初始化
+	d, cleanup, err := data.Init()
 	if err != nil {
 		panic(err)
 	}
 
-	cleanup, err := newApp()
-	if err != nil {
+	// 应用初始化
+	if err = newService(d); err != nil {
 		panic(err)
 	}
 	defer cleanup()
 
-	fmt.Printf("version: %s\n", Version)
+	zap.L().Info("server info:", zap.String("version", Version), zap.String("orm", data.Name), zap.String("gin-mode", config.Conf().Mode))
 
 	r := routers.SetupRouter()
-	_ = r.Run(config.Conf().GetPort())
+	_ = r.Run(config.Conf().Addr())
 }
