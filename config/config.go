@@ -2,9 +2,11 @@ package config
 
 import (
 	"fmt"
+	"strconv"
+
 	"github.com/fsnotify/fsnotify"
 	"github.com/spf13/viper"
-	"strconv"
+	"go.uber.org/zap"
 )
 
 var shareConf *AppConf
@@ -18,6 +20,7 @@ type AppConf struct {
 
 type Site struct {
 	Mode string `mapstructure:"mode"`
+	Host string `mapstructure:"host"`
 	Port int    `mapstructure:"port"`
 }
 
@@ -41,7 +44,13 @@ func Init() error {
 	viper.SetConfigFile("./conf/config.yaml")
 	viper.WatchConfig()
 	viper.OnConfigChange(func(in fsnotify.Event) {
-		_ = viper.Unmarshal(&conf)
+		zap.L().Info("config changed", zap.Uint32("event", uint32(in.Op)))
+		err := viper.Unmarshal(&conf)
+		if err != nil {
+			zap.L().Error("config changed unmarshal failed", zap.Error(err))
+			return
+		}
+		zap.L().Info("config changed unmarshal success")
 	})
 	err := viper.ReadInConfig()
 	if err != nil {
@@ -58,6 +67,6 @@ func Conf() *AppConf {
 	return shareConf
 }
 
-func (c *AppConf) GetPort() string {
-	return fmt.Sprintf(":%s", strconv.Itoa(c.Site.Port))
+func (c *AppConf) Addr() string {
+	return fmt.Sprintf("%s:%s", c.Site.Host, strconv.Itoa(c.Site.Port))
 }
