@@ -3,6 +3,8 @@ package biz
 import (
 	"context"
 	"time"
+
+	"gin-layout/logger"
 )
 
 type User struct {
@@ -21,11 +23,13 @@ type UserRepo interface {
 
 type UserUsecase struct {
 	repo UserRepo
+	log  logger.LogInfoFormat
 }
 
-func NewUserUsecase(repo UserRepo) *UserUsecase {
+func NewUserUsecase(repo UserRepo, log logger.LogInfoFormat) *UserUsecase {
 	return &UserUsecase{
 		repo: repo,
+		log:  log,
 	}
 }
 

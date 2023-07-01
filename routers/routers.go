@@ -4,24 +4,36 @@ import (
 	"net/http"
 
 	"gin-layout/config"
+	"gin-layout/di"
 	"gin-layout/routers/middleware"
 	"gin-layout/service"
 
 	"github.com/gin-gonic/gin"
 )
 
-func SetupRouter() *gin.Engine {
-	gin.SetMode(config.Conf().Mode)
+func SetupRouter(cfg *config.AppConf) (*gin.Engine, error) {
+	gin.SetMode(cfg.Mode)
 
 	r := gin.New()
 	r.Use(middleware.Logger(), gin.Recovery())
-	// 首页
-	r.GET("/", func(c *gin.Context) {
-		c.String(http.StatusOK, "hello")
-	})
+
+	// home
+	{
+		r.GET("/", func(c *gin.Context) {
+			c.String(http.StatusOK, "hello")
+		})
+	}
 
 	r.Use(middleware.JWT())
-	r.POST("/user", service.User().CreateUser)
 
-	return r
+	// user
+	{
+		var userSvc *service.UserService
+		if err := di.Invoke(func(us *service.UserService) { userSvc = us }); err != nil {
+			return nil, err
+		}
+		r.POST("/user", userSvc.CreateUser)
+	}
+
+	return r, nil
 }

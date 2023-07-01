@@ -6,15 +6,18 @@ import (
 	"context"
 
 	"gin-layout/biz"
+	"gin-layout/logger"
 )
 
 type userRepo struct {
 	data *Data
+	log  logger.LogInfoFormat
 }
 
-func NewUserRepo(data *Data) biz.UserRepo {
+func NewUserRepo(data *Data, log logger.LogInfoFormat) biz.UserRepo {
 	return &userRepo{
 		data: data,
+		log:  log,
 	}
 }
 

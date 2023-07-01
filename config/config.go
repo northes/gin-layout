@@ -9,8 +9,6 @@ import (
 	"go.uber.org/zap"
 )
 
-var shareConf *AppConf
-
 type AppConf struct {
 	*Site   `mapstructure:"site"`
 	*DB     `mapstructure:"db"`
@@ -39,7 +37,7 @@ type Logger struct {
 	MaxBackups int    `mapstructure:"max_backups"`
 }
 
-func Init() error {
+func NewConfig() (*AppConf, error) {
 	conf := &AppConf{}
 	viper.SetConfigFile("./conf/config.yaml")
 	viper.WatchConfig()
@@ -54,17 +52,12 @@ func Init() error {
 	})
 	err := viper.ReadInConfig()
 	if err != nil {
-		return err
+		return nil, err
 	}
 	if err = viper.Unmarshal(&conf); err != nil {
-		return err
+		return nil, err
 	}
-	shareConf = conf
-	return nil
-}
-
-func Conf() *AppConf {
-	return shareConf
+	return conf, nil
 }
 
 func (c *AppConf) Addr() string {

@@ -5,11 +5,11 @@ package data
 import (
 	"context"
 
-	"gin-layout/config"
-	"gin-layout/data/ent"
-
 	"github.com/go-redis/redis"
 	"go.uber.org/zap"
+
+	"gin-layout/config"
+	"gin-layout/data/ent"
 
 	_ "github.com/go-sql-driver/mysql"
 	_ "github.com/mattn/go-sqlite3"
@@ -22,16 +22,16 @@ type Data struct {
 	rdb *redis.Client
 }
 
-func Init() (*Data, func(), error) {
+func NewDB(cfg *config.AppConf) (*Data, func(), error) {
 
 	var client *ent.Client
 	var err error
 
-	switch config.Conf().DB.Driver {
+	switch cfg.DB.Driver {
 	case config.DBDriver.MySQL:
-		client, err = ent.Open(string(config.DBDriver.MySQL), config.Conf().MySQL.GetDSN())
+		client, err = ent.Open(string(config.DBDriver.MySQL), cfg.MySQL.GetDSN())
 	default:
-		client, err = ent.Open(string(config.DBDriver.SQLite3), config.Conf().SQLite.GetDSN())
+		client, err = ent.Open(string(config.DBDriver.SQLite3), cfg.SQLite.GetDSN())
 	}
 
 	if err != nil {

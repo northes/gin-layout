@@ -12,6 +12,7 @@ require (
 	github.com/mattn/go-sqlite3 v1.14.16
 	github.com/natefinch/lumberjack v2.0.0+incompatible
 	github.com/spf13/viper v1.15.0
+	go.uber.org/dig v1.17.0
 	go.uber.org/zap v1.23.0
 	gorm.io/driver/mysql v1.5.1
 	gorm.io/driver/sqlite v1.5.1
