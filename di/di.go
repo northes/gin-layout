@@ -28,9 +28,10 @@ func BuildContainer() (*dig.Container, error) {
 		return nil, err
 	}
 
-	container.Provide(data.NewUserRepo)
-	container.Provide(biz.NewUserUsecase)
-	container.Provide(service.NewUserService)
+	// User
+	_ = container.Provide(data.NewUserRepo)
+	_ = container.Provide(biz.NewUserUsecase)
+	_ = container.Provide(service.NewUserService)
 
 	return container, nil
 }
